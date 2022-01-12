@@ -21,12 +21,15 @@
 
 
 void SystemClock_Config(void);
+void GPIO_Init(void);
+void SysTick_Handler(void);
 
 
 int main(void)
 {
 	SystemClock_Config();
-
+	SysTick_Config(SysTicks);
+	GPIO_Init();
     /* Loop forever */
 	while(1);
 }
@@ -67,3 +70,27 @@ void SystemClock_Config(void)
 	RCC->CFGR |= RCC_CFGR_SW_PLL;
 	while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);
 }
+
+
+void GPIO_Init(void)
+{
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+	GPIOD->MODER |= GPIO_MODER_MODE15_0;
+}
+
+
+void SysTick_Handler(void)
+{
+	static uint16_t count = 0;
+	if (count > SysTicksClk)
+	{
+		if (GPIOD->ODR & GPIO_ODR_ODR_15)
+			GPIOD->ODR &= ~GPIO_ODR_ODR_15;
+		else
+			GPIOD->ODR |= GPIO_ODR_ODR_15;
+		count = 0;
+	}
+	count++;
+}
+
+
