@@ -7,15 +7,7 @@
 #define PLLN 336
 #define PLLP 2
 #define AHB_Prescaler 1
-#define APB1_Prescaler 4
-#define APB1_TimPrescaler 2
-#define APB2_Prescaler 2
-#define APB2_TimPrescaler 2
 #define HCLK HSE/PLLM*PLLN/PLLP/AHB_Prescaler
-#define APB1 HCLK/APB1_Prescaler
-#define APB1_Tim APB1*APB1_TimPrescaler
-#define APB2 HCLK/APB2_Prescaler
-#define APB2_Tim APB2*APB2_TimPrescaler
 #define SysTicksClk 6000
 #define SysTicks HCLK/SysTicksClk
 
@@ -30,6 +22,7 @@ int main(void)
 	SystemClock_Config();
 	SysTick_Config(SysTicks);
 	GPIO_Init();
+
     /* Loop forever */
 	while(1);
 }
