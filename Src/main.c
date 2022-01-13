@@ -2,9 +2,9 @@
 #include <stm32f407xx.h>
 
 
-#define HSE 25000000
-#define PLLM 25
-#define PLLN 336
+#define HSE 8000000
+#define PLLM 4
+#define PLLN 168
 #define PLLP 2
 #define AHB_Prescaler 1
 #define HCLK HSE/PLLM*PLLN/PLLP/AHB_Prescaler
