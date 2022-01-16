@@ -13,7 +13,7 @@
 
 
 void SystemClock_Config(void);
-void GPIO_Init(void);
+void GPIO_Config(void);
 void SysTick_Handler(void);
 
 
@@ -21,7 +21,7 @@ int main(void)
 {
 	SystemClock_Config();
 	SysTick_Config(SysTicks);
-	GPIO_Init();
+	GPIO_Config();
 
     /* Loop forever */
 	while(1);
@@ -65,7 +65,7 @@ void SystemClock_Config(void)
 }
 
 
-void GPIO_Init(void)
+void GPIO_Config(void)
 {
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 	GPIOD->MODER |= GPIO_MODER_MODE15_0;
