@@ -10,11 +10,14 @@
 #define HCLK HSE/PLLM*PLLN/PLLP/AHB_Prescaler
 #define SysTicksClk 6000
 #define SysTicks HCLK/SysTicksClk
+#define TIM2_PSC 0
+#define TIM2_ARR 3359
 
 
 void SystemClock_Config(void);
 void GPIO_Config(void);
 void SysTick_Handler(void);
+void TIM_Config(void);
 
 
 int main(void)
@@ -84,6 +87,31 @@ void SysTick_Handler(void)
 		count = 0;
 	}
 	count++;
+}
+
+
+void TIM_Config(void)
+{
+	/* enable TIM2 */
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+
+	/* set prescaler and auto-reload */
+	TIM2->PSC = TIM2_PSC;
+	TIM2->ARR = TIM2_ARR;
+
+	/* set PWM mode 1 */
+	TIM2->CCMR1 &= ~TIM_CCMR1_CC2S;
+	TIM2->CCMR1 &= ~TIM_CCMR1_OC2M;
+	TIM2->CCMR1 |= (TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2);
+
+	/* set initial CCR2 */
+	TIM2->CCR2 = 0;
+
+	/* enable OC2 */
+	TIM2->CCER |= TIM_CCER_CC2E;
+
+	/* enable TIM2 counter */
+	TIM2->CR1 |= TIM_CR1_CEN;
 }
 
 
