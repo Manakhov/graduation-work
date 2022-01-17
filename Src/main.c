@@ -10,8 +10,8 @@
 #define HCLK HSE/PLLM*PLLN/PLLP/AHB_Prescaler
 #define SysTicksClk 6000
 #define SysTicks HCLK/SysTicksClk
-#define TIM2_PSC 0
-#define TIM2_ARR 3359
+#define TIM4_PSC 0
+#define TIM4_ARR 3359
 
 
 void SystemClock_Config(void);
@@ -24,6 +24,7 @@ int main(void)
 {
 	SystemClock_Config();
 	SysTick_Config(SysTicks);
+	TIM_Config();
 	GPIO_Config();
 
     /* Loop forever */
@@ -75,19 +76,18 @@ void GPIO_Config(void)
 	GPIOD->MODER &= ~GPIO_MODER_MODER15;
 	GPIOD->MODER |= GPIO_MODER_MODER15_0;
 
-	/* PA1 config */
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-	GPIOA->MODER &= ~GPIO_MODER_MODER1;
-	GPIOA->MODER |= GPIO_MODER_MODE1_1;
-	GPIOA->AFR[0] &= ~GPIO_AFRL_AFSEL1;
-	GPIOA->AFR[0] |= GPIO_AFRL_AFSEL1_0;
+	/* PD14 config */
+	GPIOD->MODER &= ~GPIO_MODER_MODER14;
+	GPIOD->MODER |= GPIO_MODER_MODE14_1;
+	GPIOD->AFR[1] &= ~GPIO_AFRL_AFSEL14;
+	GPIOD->AFR[1] |= GPIO_AFRL_AFSEL14_1;
 }
 
 
 void SysTick_Handler(void)
 {
 	static uint16_t count = 0;
-	static uint16_t TIM2_CCR2 = 0;
+	static uint16_t TIM4_CCR3 = 0;
 	static int8_t add_value = 100;
 	if (count > SysTicksClk)
 	{
@@ -98,13 +98,13 @@ void SysTick_Handler(void)
 			GPIOD->ODR |= GPIO_ODR_ODR_15;
 
 		/* PWM test on PA1 */
-		TIM2_CCR2 = TIM2_CCR2 + add_value;
-		if ((TIM2_CCR2 > TIM2_ARR) | (TIM2_CCR2 < 0))
+		TIM4_CCR3 = TIM4_CCR3 + add_value;
+		if ((TIM4_CCR3 > TIM4_ARR) | (TIM4_CCR3 < 0))
 		{
 			add_value = -add_value;
-			TIM2_CCR2 = TIM2_CCR2 + add_value;
+			TIM4_CCR3 = TIM4_CCR3 + add_value;
 		}
-		TIM2->CCR2 = TIM2_CCR2;
+		TIM4->CCR3 = TIM4_CCR3;
 
 		count = 0;
 	}
@@ -114,26 +114,26 @@ void SysTick_Handler(void)
 
 void TIM_Config(void)
 {
-	/* enable TIM2 */
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	/* enable TIM4 */
+	RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
 
 	/* set prescaler and auto-reload */
-	TIM2->PSC = TIM2_PSC;
-	TIM2->ARR = TIM2_ARR;
+	TIM4->PSC = TIM4_PSC;
+	TIM4->ARR = TIM4_ARR;
 
 	/* set PWM mode 1 */
-	TIM2->CCMR1 &= ~TIM_CCMR1_CC2S;
-	TIM2->CCMR1 &= ~TIM_CCMR1_OC2M;
-	TIM2->CCMR1 |= (TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2);
+	TIM4->CCMR2 &= ~TIM_CCMR2_CC3S;
+	TIM4->CCMR2 &= ~TIM_CCMR2_OC3M;
+	TIM4->CCMR2 |= (TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2);
 
-	/* set initial CCR2 */
-	TIM2->CCR2 = 0;
+	/* set initial CCR3 */
+	TIM4->CCR3 = 0;
 
-	/* enable OC2 */
-	TIM2->CCER |= TIM_CCER_CC2E;
+	/* enable OC3 */
+	TIM4->CCER |= TIM_CCER_CC3E;
 
 	/* enable TIM2 counter */
-	TIM2->CR1 |= TIM_CR1_CEN;
+	TIM4->CR1 |= TIM_CR1_CEN;
 }
 
 
