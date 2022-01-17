@@ -85,12 +85,25 @@ void GPIO_Config(void)
 void SysTick_Handler(void)
 {
 	static uint16_t count = 0;
+	static uint16_t TIM2_CCR2 = 0;
+	static int8_t add_value = 100;
 	if (count > SysTicksClk)
 	{
+		/* change blue LED */
 		if (GPIOD->ODR & GPIO_ODR_ODR_15)
 			GPIOD->ODR &= ~GPIO_ODR_ODR_15;
 		else
 			GPIOD->ODR |= GPIO_ODR_ODR_15;
+
+		/* PWM test on PA1 */
+		TIM2_CCR2 = TIM2_CCR2 + add_value;
+		if ((TIM2_CCR2 > TIM2_ARR) | (TIM2_CCR2 < 0))
+		{
+			add_value = -add_value;
+			TIM2_CCR2 = TIM2_CCR2 + add_value;
+		}
+		TIM2->CCR2 = TIM2_CCR2;
+
 		count = 0;
 	}
 	count++;
