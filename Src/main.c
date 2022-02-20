@@ -14,7 +14,7 @@
 #define APB1_Tim HCLK/APB1_Prescaler*2
 #define PWM_freq 25000
 #define TIM4_PSC 0
-#define TIM4_ARR APB1_Tim/PWM_frec-1
+#define TIM4_ARR APB1_Tim/PWM_freq-1
 
 
 void SystemClock_Config(void);
