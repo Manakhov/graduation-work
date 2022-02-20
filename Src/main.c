@@ -133,6 +133,9 @@ void TIM_Config(void)
 	/* initialize all the registers */
 	TIM4->EGR |= TIM_EGR_UG;
 
+	/* disable slave mode */
+	TIM4->SMCR &= ~TIM_SMCR_SMS;
+
 	/* set initial CCR3 */
 	TIM4->CCR3 = 0;
 
