@@ -100,12 +100,11 @@ void SysTick_Handler(void)
 		else
 			GPIOD->ODR |= GPIO_ODR_ODR_15;
 
-		/* PWM test on PA1 */
+		/* PWM on red LED */
 		TIM4_CCR3 = TIM4_CCR3 + add_value;
-		if ((TIM4_CCR3 > TIM4_ARR) | (TIM4_CCR3 < 0))
+		if (TIM4_CCR3 > TIM4_ARR)
 		{
-			add_value = -add_value;
-			TIM4_CCR3 = TIM4_CCR3 + add_value;
+			TIM4_CCR3 = 0;
 		}
 		TIM4->CCR3 = TIM4_CCR3;
 
