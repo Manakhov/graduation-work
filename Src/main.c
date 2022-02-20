@@ -127,15 +127,19 @@ void TIM_Config(void)
 	/* set PWM mode 1 */
 	TIM4->CCMR2 &= ~TIM_CCMR2_CC3S;
 	TIM4->CCMR2 &= ~TIM_CCMR2_OC3M;
-	TIM4->CCMR2 |= (TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2);
+	TIM4->CCMR2 |= (TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3PE);
+	TIM4->CR1 |= TIM_CR1_ARPE;
+
+	/* initialize all the registers */
+	TIM4->EGR |= TIM_EGR_UG;
 
 	/* set initial CCR3 */
 	TIM4->CCR3 = 0;
 
 	/* enable OC3 */
-	TIM4->CCER |= TIM_CCER_CC3E;
+	TIM4->CCER |= (TIM_CCER_CC3P | TIM_CCER_CC3E)
 
-	/* enable TIM2 counter */
+	/* enable TIM4 counter */
 	TIM4->CR1 |= TIM_CR1_CEN;
 }
 
