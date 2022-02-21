@@ -139,7 +139,7 @@ void TIM_Config(void)
 	TIM4->CCR3 = 0;
 
 	/* enable OC3 */
-	TIM4->CCER |= (TIM_CCER_CC3P | TIM_CCER_CC3E)
+	TIM4->CCER |= (TIM_CCER_CC3P | TIM_CCER_CC3E);
 
 	/* enable TIM4 counter */
 	TIM4->CR1 |= TIM_CR1_CEN;
