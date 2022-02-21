@@ -90,23 +90,20 @@ void GPIO_Config(void)
 void SysTick_Handler(void)
 {
 	static uint16_t count = 0;
-	static uint16_t TIM4_CCR3 = 0;
-	static int8_t add_value = 100;
+	static uint8_t add_value = 100;
 	if (count > SysTicksClk)
 	{
-		/* change blue LED */
+		/* change blue LED and PWM change red LED */
 		if (GPIOD->ODR & GPIO_ODR_ODR_15)
-			GPIOD->ODR &= ~GPIO_ODR_ODR_15;
-		else
-			GPIOD->ODR |= GPIO_ODR_ODR_15;
-
-		/* PWM on red LED */
-		TIM4_CCR3 = TIM4_CCR3 + add_value;
-		if (TIM4_CCR3 > TIM4_ARR)
 		{
-			TIM4_CCR3 = 0;
+			GPIOD->ODR &= ~GPIO_ODR_ODR_15;
+			TIM4->CCR3 = add_value;
 		}
-		TIM4->CCR3 = TIM4_CCR3;
+		else
+		{
+			GPIOD->ODR |= GPIO_ODR_ODR_15;
+			TIM4->CCR3 = TIM4_ARR - add_value;
+		}
 
 		count = 0;
 	}
