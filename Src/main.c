@@ -10,18 +10,25 @@
 #define HCLK HSE/PLLM*PLLN/PLLP/AHB_Prescaler
 #define SysTicksClk 6000
 #define SysTicks HCLK/SysTicksClk
+#define APB1_Prescaler 4
+#define APB1_Tim HCLK/APB1_Prescaler*2
+#define PWM_freq 25000
+#define TIM4_PSC 0
+#define TIM4_ARR APB1_Tim/PWM_freq-1
 
 
 void SystemClock_Config(void);
-void GPIO_Init(void);
+void GPIO_Config(void);
 void SysTick_Handler(void);
+void TIM_Config(void);
 
 
 int main(void)
 {
 	SystemClock_Config();
 	SysTick_Config(SysTicks);
-	GPIO_Init();
+	TIM_Config();
+	GPIO_Config();
 
     /* Loop forever */
 	while(1);
@@ -65,25 +72,78 @@ void SystemClock_Config(void)
 }
 
 
-void GPIO_Init(void)
+void GPIO_Config(void)
 {
+	/* PD15 config */
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-	GPIOD->MODER |= GPIO_MODER_MODE15_0;
+	GPIOD->MODER &= ~GPIO_MODER_MODER15;
+	GPIOD->MODER |= GPIO_MODER_MODER15_0;
+
+	/* PD14 config */
+	GPIOD->MODER &= ~GPIO_MODER_MODER14;
+	GPIOD->MODER |= GPIO_MODER_MODE14_1;
+	GPIOD->AFR[1] &= ~GPIO_AFRH_AFSEL14;
+	GPIOD->AFR[1] |= GPIO_AFRH_AFSEL14_1;
 }
 
 
 void SysTick_Handler(void)
 {
 	static uint16_t count = 0;
+	static uint8_t add_value = 100;
 	if (count > SysTicksClk)
 	{
+		/* change blue LED and PWM change red LED */
 		if (GPIOD->ODR & GPIO_ODR_ODR_15)
+		{
 			GPIOD->ODR &= ~GPIO_ODR_ODR_15;
+			TIM4->CCR3 = add_value;
+		}
 		else
+		{
 			GPIOD->ODR |= GPIO_ODR_ODR_15;
+			TIM4->CCR3 = TIM4_ARR - add_value;
+		}
+
 		count = 0;
 	}
 	count++;
+}
+
+
+void TIM_Config(void)
+{
+	/* enable TIM4 */
+	RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+
+	/* set prescaler and auto-reload */
+	TIM4->PSC = TIM4_PSC;
+	TIM4->ARR = TIM4_ARR;
+
+	/* configure CR1 register */
+	TIM4->CR1 &= ~TIM_CR1_CMS;
+	TIM4->CR1 &= ~TIM_CR1_DIR;
+	TIM4->CR1 |= TIM_CR1_ARPE;
+
+	/* set PWM mode 2 */
+	TIM4->CCMR2 &= ~TIM_CCMR2_CC3S;
+//	TIM4->CCMR2 &= ~TIM_CCMR2_OC3M;
+	TIM4->CCMR2 |= (TIM_CCMR2_OC3M | TIM_CCMR2_OC3PE);
+
+	/* initialize all the registers */
+	TIM4->EGR |= TIM_EGR_UG;
+
+	/* disable slave mode */
+	TIM4->SMCR &= ~TIM_SMCR_SMS;
+
+	/* set initial CCR3 */
+	TIM4->CCR3 = 0;
+
+	/* enable OC3 */
+	TIM4->CCER |= (TIM_CCER_CC3P | TIM_CCER_CC3E);
+
+	/* enable TIM4 counter */
+	TIM4->CR1 |= TIM_CR1_CEN;
 }
 
 
