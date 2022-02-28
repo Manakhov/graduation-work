@@ -120,11 +120,15 @@ void TIM_Config(void)
 	TIM4->PSC = TIM4_PSC;
 	TIM4->ARR = TIM4_ARR;
 
-	/* set PWM mode 1 */
-	TIM4->CCMR2 &= ~TIM_CCMR2_CC3S;
-	TIM4->CCMR2 &= ~TIM_CCMR2_OC3M;
-	TIM4->CCMR2 |= (TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3PE);
+	/* configure CR1 register */
+	TIM4->CR1 &= ~TIM_CR1_CMS;
+	TIM4->CR1 &= ~TIM_CR1_DIR;
 	TIM4->CR1 |= TIM_CR1_ARPE;
+
+	/* set PWM mode 2 */
+	TIM4->CCMR2 &= ~TIM_CCMR2_CC3S;
+//	TIM4->CCMR2 &= ~TIM_CCMR2_OC3M;
+	TIM4->CCMR2 |= (TIM_CCMR2_OC3M | TIM_CCMR2_OC3PE);
 
 	/* initialize all the registers */
 	TIM4->EGR |= TIM_EGR_UG;
