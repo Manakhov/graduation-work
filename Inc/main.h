@@ -24,6 +24,7 @@
 void SystemClock_Config(void);
 void GPIO_Config(void);
 void TIM_Config(void);
+void SysTick_Handler(void);
 
 
 #endif /* MAIN_H_ */
