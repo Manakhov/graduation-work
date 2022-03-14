@@ -7,6 +7,7 @@ int main(void)
 	SysTick_Config(SysTicks);
 	TIM_Config();
 	GPIO_Config();
+	USART_Config();
 
     /* Loop forever */
 	while(1);
@@ -143,4 +144,30 @@ void SysTick_Handler(void)
 	count++;
 }
 
+
+void USART2_IRQHandler(void)
+{
+	static char message[] = "\0";
+	static uint8_t count = 0;
+	if ((USART2->SR & USART_SR_TXE) & (USART2->CR1 & USART_CR1_TXEIE))
+	{
+		if (message[count] == '\0')
+		{
+			if (GPIOA->IDR & GPIO_IDR_ID0)
+			{
+				message = "yes";
+			}
+			else
+			{
+				message = "no";
+			}
+			count = 0;
+		}
+		else
+		{
+			USART2->DR = message[count];
+			count++;
+		}
+	}
+}
 
