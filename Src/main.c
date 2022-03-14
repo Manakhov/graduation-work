@@ -108,6 +108,18 @@ void TIM_Config(void)
 }
 
 
+void USART_Config(void)
+{
+	/* enable USART2 */
+	RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+	USART2->BRR = APB1/BAUDRATE;
+	USART2->CR1 |= (USART_CR1_TE | USART_CR1_TXEIE | USART_CR1_UE);
+
+	/* enable interrupt */
+	NVIC_EnableIRQ(USART2_IRQn);
+}
+
+
 void SysTick_Handler(void)
 {
 	static uint16_t count = 0;
