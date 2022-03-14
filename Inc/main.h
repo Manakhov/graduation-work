@@ -15,10 +15,12 @@
 #define SysTicksClk 6000
 #define SysTicks HCLK/SysTicksClk
 #define APB1_Prescaler 4
-#define APB1_Tim HCLK/APB1_Prescaler*2
+#define APB1 HCLK/APB1_Prescaler
+#define APB1_Tim APB1*2
 #define PWM_freq 25000
 #define TIM4_PSC 0
 #define TIM4_ARR APB1_Tim/PWM_freq-1
+#define BAUDRATE
 
 
 void SystemClock_Config(void);

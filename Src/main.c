@@ -147,19 +147,23 @@ void SysTick_Handler(void)
 
 void USART2_IRQHandler(void)
 {
-	static char message[] = "\0";
-	static uint8_t count = 0;
+	static char message[] = "yes";
+	static uint8_t count = 3;
 	if ((USART2->SR & USART_SR_TXE) & (USART2->CR1 & USART_CR1_TXEIE))
 	{
 		if (message[count] == '\0')
 		{
 			if (GPIOA->IDR & GPIO_IDR_ID0)
 			{
-				message = "yes";
+				message[0] = 'y';
+				message[1] = 'e';
+				message[2] = 's';
 			}
 			else
 			{
-				message = "no";
+				message[0] = 'n';
+				message[1] = 'o';
+				message[2] = '\0';
 			}
 			count = 0;
 		}
