@@ -118,6 +118,28 @@ void TIM_Config(void)
 
 	/* enable TIM4 counter */
 	TIM4->CR1 |= TIM_CR1_CEN;
+
+	/* enable TIM3 */
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+
+	/* configure channels 1,2 as input*/
+	TIM3->CCMR1 &= ~(TIM_CCMR1_CC1S | TIM_CCMR1_CC2S);
+	TIM3->CCMR1 |= (TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_0);
+	TIM3->CCER &= ~(TIM_CCER_CC1P | TIM_CCER_CC2P);
+	TIM3->CCER &= ~(TIM_CCER_CC1NP | TIM_CCER_CC2NP);
+
+	/* set encoder mode 1 */
+	TIM3->SMCR &= ~TIM_SMCR_SMS;
+	TIM3->SMCR |= TIM_SMCR_SMS_0;
+
+	/* set capture filter */
+	TIM3->CCMR1 &= (TIM_CCMR1_IC1F | TIM_CCMR1_IC2F);
+	TIM3->CCMR1 |= (TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1 | TIM_CCMR1_IC2F_0 | TIM_CCMR1_IC2F_1);
+
+	TIM3->ARR = 359;
+
+	/* enable TIM3 counter */
+	TIM3->CR1 |= TIM_CR1_CEN;
 }
 
 
